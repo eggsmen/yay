@@ -1,26 +1,26 @@
-// data_fetcher.dart
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:eventsource/eventsource.dart';
 import 'package:menttang/src/data/baseUrl.dart';
 
 class DataFetcher {
-  static Future<void> fetchData() async {
+  static Stream<String> fetchDataStream() async* {
     try {
-      final response = await http.post(
-        Uri.parse(urlBase.url + '/chat-gpt/ask-stream/v1'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'question': '김태윤 교수님께 안부메일 써줘'}),
-      );
+      // 쿼리 파라미터를 URL에 추가
+      final url = Uri.parse(urlBase.url + '/chat-gpt/ask-stream/v1');
 
-      if (response.statusCode == 200) {
-        final responseBody = utf8.decode(response.bodyBytes);
-        print('Response: $responseBody');
-        // 여기서 responseBody를 원하는 형태로 가공하거나 사용할 수 있습니다.
-      } else {
-        print('Failed to fetch data. Status code: ${response.statusCode}');
+      // EventSource 연결 설정 (요청 본문 없음)
+      final eventSource = await EventSource.connect(url, headers: {
+        'Content-Type': 'application/json'}, body: jsonEncode({'question': '김태윤 교수님께 성적 정정메일을 작성해줘'}));
+
+      await for (final event in eventSource) {
+        yield event.data ?? 'Default value';  // 'Default value'를 적절한 대체 문자열로 교체
       }
-    } catch (e) {
+
+    } catch (e, stacktrace) {
+      // 오류와 스택 트레이스 출력
       print('Error: $e');
+      print('Stacktrace: $stacktrace');
+      yield 'Error: $e';
     }
   }
 }
