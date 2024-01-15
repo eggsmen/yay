@@ -1,26 +1,34 @@
-import 'dart:convert';
-import 'package:eventsource/eventsource.dart';
-import 'package:menttang/src/data/baseUrl.dart';
+import 'dart:async';
+import 'package:sse/client/sse_client.dart';
 
 class DataFetcher {
-  static Stream<String> fetchDataStream() async* {
+  static Stream<String> fetchDataStream() {
+
+    final controller = StreamController<String>();
+
     try {
-      // 쿼리 파라미터를 URL에 추가
-      final url = Uri.parse(urlBase.url + '/chat-gpt/ask-stream/v1');
+      final url = Uri.parse('http://localhost:8080/api/chat-gpt/ask-stream/v1?question=기ㅁ태')
+          .replace(queryParameters: {
+        'question': '김태윤 교수님한테 정중하게 성적 정정 메일 써줘. 메일은 무조건 한국어로 써줘. 그리고 메일이 끝나면 end 를 한번에 보내줘.'
+      }).toString();
 
-      // EventSource 연결 설정 (요청 본문 없음)
-      final eventSource = await EventSource.connect(url, headers: {
-        'Content-Type': 'application/json'}, body: jsonEncode({'question': '김태윤 교수님께 성적 정정메일을 작성해줘'}));
-
-      await for (final event in eventSource) {
-        yield event.data ?? 'Default value';  // 'Default value'를 적절한 대체 문자열로 교체
+      final sseClient = SseClient(url);
+      sseClient.stream.listen((data) {
+        if (data == 'end') {
+          sseClient.close();
+        } else {
+          controller.add(data);
+        }
+      }, onError: (error) {
+        print('Error: $error');
+        controller.addError('Error: $error');
       }
-
-    } catch (e, stacktrace) {
-      // 오류와 스택 트레이스 출력
-      print('Error: $e');
-      print('Stacktrace: $stacktrace');
-      yield 'Error: $e';
+      );
+    } catch (e) {
+      print('Exception: $e');
+      controller.addError('Exception: $e');
     }
+
+    return controller.stream;
   }
 }

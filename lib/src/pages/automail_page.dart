@@ -16,21 +16,29 @@ class _AutomailPageState extends State<AutomailPage> {
   final ScrollController scrollController = ScrollController();
   StreamSubscription<String>? dataSubscription;
   String liveData = '';
+  bool isStreamCompleted = false;
 
+  @override
+  void initState() {
+    super.initState();
+  }
 
   void initiateStreaming() {
+    dataSubscription?.cancel();
     dataSubscription = DataFetcher.fetchDataStream().listen((data) {
       setState(() {
-        liveData += data.substring(1,data.length-1).replaceAll(r'\n', '\n');
+        liveData += data;
       });
+    }, onError: (error) {
+      print('Error: $error');
     });
   }
 
   @override
   void dispose() {
-    dataSubscription?.cancel(); // 스트림 구독 취소
-    super.dispose();
+      dataSubscription?.cancel();
   }
+
 
 
 
@@ -53,28 +61,28 @@ class _AutomailPageState extends State<AutomailPage> {
       ),);
   }
 
- Widget _contents() {
-   return Scrollbar(
-     thumbVisibility: true,
-     controller: scrollController,
-     child: SingleChildScrollView(
-       controller: scrollController,
-       child: Padding(
-         padding: const EdgeInsets.only(right:40),
-         child: Column(
-           crossAxisAlignment: CrossAxisAlignment.start,
-           children: [
-             SizedBox(height: 15,),
-             clrbutton("통신버튼", initiateStreaming),
-             SizedBox(height: 15,),
-             Text(liveData,
-             style: TextStyle(fontSize: 16))
-           ],
-         ),
-       ),
-     ),
-   );
- }
+  Widget _contents() {
+    return Scrollbar(
+      thumbVisibility: true,
+      controller: scrollController,
+      child: SingleChildScrollView(
+        controller: scrollController,
+        child: Padding(
+          padding: const EdgeInsets.only(right:40),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 15,),
+              clrbutton("통신버튼", initiateStreaming),
+              SizedBox(height: 15,),
+              Text(liveData,
+                  style: TextStyle(fontSize: 16))
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   Widget _mobileLayout(){
     return Container(
@@ -184,21 +192,21 @@ class _AutomailPageState extends State<AutomailPage> {
 
 
   Widget smallmenu(String smallmenu, double fontsz, GestureTapCallback onTap){
-  return InkWell(
-  mouseCursor: MaterialStateMouseCursor.clickable,
-  hoverColor: Colors.blueAccent,
-  splashColor: Colors.yellow,
-  highlightColor: Colors.red,
-  onTap: onTap,
-  child:Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 15.0),
-  child: Text(
-  smallmenu,
-  style: TextStyle(
-  fontSize: fontsz,
-  )
-  ),
-  ),);
+    return InkWell(
+      mouseCursor: MaterialStateMouseCursor.clickable,
+      hoverColor: Colors.blueAccent,
+      splashColor: Colors.yellow,
+      highlightColor: Colors.red,
+      onTap: onTap,
+      child:Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+        child: Text(
+            smallmenu,
+            style: TextStyle(
+              fontSize: fontsz,
+            )
+        ),
+      ),);
   }
 
   Widget _sideMenu(String sidemenuName, double fontsz, VoidCallback onPressed){
@@ -223,14 +231,14 @@ class _AutomailPageState extends State<AutomailPage> {
 
 
   Color getForegroundColor(Set<MaterialState> states){
-   const interactiveStates = <MaterialState>{
-     MaterialState.hovered,
-     MaterialState.pressed,
-   };
-   if(states.any(interactiveStates.contains)) {
-     return Color(0xff6EA6E9);
-   }
-   return Colors.black;
+    const interactiveStates = <MaterialState>{
+      MaterialState.hovered,
+      MaterialState.pressed,
+    };
+    if(states.any(interactiveStates.contains)) {
+      return Color(0xff6EA6E9);
+    }
+    return Colors.black;
   }
 
   EdgeInsets getPadding(Set<MaterialState> states){
