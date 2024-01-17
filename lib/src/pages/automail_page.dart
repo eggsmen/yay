@@ -27,6 +27,9 @@ class _AutomailPageState extends State<AutomailPage> {
   String answer4 = '';
   String answer5 = '';
   String answer6 = '';
+  String a7 = '';
+  String a8 = '';
+  String a9 = '';
   bool areAllQuestionsAnswered() {
     return answer1.isNotEmpty && answer2.isNotEmpty && answer3.isNotEmpty && answer4.isNotEmpty;
   }
@@ -45,9 +48,8 @@ class _AutomailPageState extends State<AutomailPage> {
 
   void onQuestionsCompleted(String a1, String a2, String a3, String a4, String a5, String a6) {
     onQuestionsAnswered();
-    initiateStreaming(a1,a2,a3,a4,a5,a6);
+    initiateStreaming(a1,a2,a3,a4,a5,a6,a7,a8,a9);
   }
-
 
 
   @override
@@ -55,9 +57,9 @@ class _AutomailPageState extends State<AutomailPage> {
     super.initState();
   }
 
-  void initiateStreaming(String a1, String a2, String a3, String a4, String a5, String a6) {
+  void initiateStreaming(String a1, String a2, String a3, String a4, String a5, String a6, String a7, String a8, String a9) {
     dataSubscription?.cancel();
-    dataSubscription = DataFetcher.fetchDataStream(a1,a2,a3,a4,a5,a6).listen((data) {
+    dataSubscription = DataFetcher.fetchDataStream(a1,a2,a3,a4,a5,a6,a7,a8,a9).listen((data) {
       setState(() {
         liveData += data;
       });
@@ -98,6 +100,7 @@ class _AutomailPageState extends State<AutomailPage> {
       String hintText,
       TextEditingController controller,
       double? width,
+      bool ismandatory,
       Function(String) onTextChanged // 상태 업데이트를 위한 콜백 함수 추가
       ) {
     return Column(
@@ -106,10 +109,11 @@ class _AutomailPageState extends State<AutomailPage> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
-            mainAxisSize: MainAxisSize.min,
+            //mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(labelText),
-              Text(' *', style: TextStyle(color: Colors.red)),
+              Text(labelText, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              if(ismandatory) Text( ' *', style: TextStyle(color: Colors.red)),
             ],
           ),
         ),
@@ -122,10 +126,14 @@ class _AutomailPageState extends State<AutomailPage> {
             },
             decoration: InputDecoration(
               hintText: hintText,
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xFF14386B)),
+                )
             ),
             maxLines: null,
           ),
         ),
+        SizedBox(height: 30,),
       ],
     );
   }
@@ -143,33 +151,33 @@ class _AutomailPageState extends State<AutomailPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      questionField('보내는 이 정보', 'ex) 성균관대학교 도술학과 홍길동', answer1Controller, questionWidth, (value) {
+                      questionField('보내는 이 정보', 'ex) 성균관대학교 도술학과 홍길동', answer1Controller, questionWidth, true,(value) {
                         setState(() {
                           answer1 = value;
                         });
                       }),
-                      questionField('받는 이 정보', 'ex) 김태윤 교수님', answer2Controller, questionWidth, (value) {
+                      questionField('받는 이 정보', 'ex) 김태윤 교수님', answer2Controller, questionWidth, true, (value) {
                         setState(() {
                           answer2 = value;
                         });
                       }),
-                      questionField('용건', 'ex) DS101 축지법개론 성적문의', answer3Controller, questionWidth, (value) {
+                      questionField('용건', 'ex) DS101 축지법개론 성적문의', answer3Controller, questionWidth, true, (value) {
                         setState(() {
                           answer3 = value;
                         });
                       }),
-                      questionField('상세정보', 'ex) 축지법 실습 성적에 대한 피드백이 궁금함', answer4Controller, questionWidth, (value) {
+                      questionField('상세정보', 'ex) 축지법 실습 성적에 대한 피드백이 궁금함', answer4Controller, questionWidth, true,(value) {
                         setState(() {
                           answer4 = value;
                         });
                       }),
 
-                      questionField('연락처', 'ex) 010-xxxx-xxxx', answer5Controller, questionWidth, (value) {
+                      questionField('연락처', 'ex) 010-xxxx-xxxx', answer5Controller, questionWidth, false, (value) {
                         setState(() {
                           answer5 = value;
                         });
                       }),
-                      questionField('기타 사항', 'ex) 도술대학원 진학에 관련하여 조언이 필요함', answer6Controller, questionWidth, (value) {
+                      questionField('기타 사항', 'ex) 도술대학원 진학에 관련하여 조언이 필요함', answer6Controller, questionWidth,false, (value) {
                         setState(() {
                           answer6 = value;
                         });
@@ -216,25 +224,62 @@ class _AutomailPageState extends State<AutomailPage> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(child: _contents(200)),
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.only(right:5),
-              child: Container(
-                width: 60,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text("부메뉴", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
-                    SizedBox(height: 8,),
-                    SideMenu(sidemenuName: "메뉴1", fontsz:12),
-                    SideMenu(sidemenuName: "메뉴2", fontsz:12),
-                    Dropbox(sidemenuName: "메뉴3", fontsz:12),
-                    Dropbox(sidemenuName: "메뉴4", fontsz:12),
-
-
-                  ],
+          Expanded( // Expanded를 사용하여 왼쪽 Column이 남은 공간을 모두 차지하도록 함
+            child: Column(
+              children: [
+                Divider(
+                  thickness: 0.3, // 밑줄의 두께 조절
+                  color: Colors.grey, // 밑줄의 색상
                 ),
+                Container(
+                alignment: Alignment.center,
+              height: 20,
+              width: double.infinity,
+              color: Colors.transparent, // 배경색 설정
+              child: Text(
+                "간편 메일 작성",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+              ),
+            ),
+      Divider(
+        thickness: 0.3, // 밑줄의 두께 조절
+        color: Colors.grey, // 밑줄의 색상
+      ), // 고정 높이를 가진 SizedBox를 사용
+                Expanded(child: _contents(400)), // 나머지 공간을 차지하는 위젯
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right:5),
+            child: Container(
+              width: 90,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text("메일 옵션", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
+                  SizedBox(height: 8,),
+                  Dropbox(category: "언어", options: ["한국어", "中文", "tiếng Việt", "O'zbekcha", "Indonésia", "हिन्दी", "русский", "қазақша", "বাংলা", "اُردُو", "官话", "日本語", "Монгол хэл", "မြန်မာဘာသာ", "English", " Filipino", "مَصْرِِي", "ภาษาไทย", "кыргызча", "فارسی", "Français", "Italiano", "Español", "Deutsch", "Melayu", "नेपाली", "اللغة العربية", "ភាសាខ្មែរ", "Azərbaycan dili", "广东话", "български", "українська мова", "Latviešu ", "ქართული ", "Teny Malagasy", "Swahili", "Eesti keel", "Türkmençe", "Türkçe", "Română", "тоҷикӣ", "português", "čeština", "suomalainen", "język polski", "Gaeilge", "norsk", "lietuvių kalba", "Nederlands", "עִבְרִית", "Kirundi"], fontsz:10,onSelected: (value) {
+                    setState(() {
+                      a7 = value ?? '';
+                    });
+                  },),
+                  Dropbox(category: "스타일", options: ['공손하게','친근하게','간결하게','상세하게'], fontsz:10, onSelected: (value) {
+                    setState(() {
+                      a8 = value ?? '';
+                    });
+                  },),
+                  Dropbox(category: "이모지", options: ['많이','조금','없음'], fontsz:10, onSelected: (value) {
+                    setState(() {
+                      a9= value ?? '';
+                    });
+                  },),
+
+
+                ],
               ),
             ),
           )
@@ -249,21 +294,60 @@ class _AutomailPageState extends State<AutomailPage> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(child: _contents(300)),
+          Expanded( // Expanded를 사용하여 왼쪽 Column이 남은 공간을 모두 차지하도록 함
+            child: Column(
+              children: [
+                Divider(
+                  thickness: 0.3, // 밑줄의 두께 조절
+                  color: Colors.grey, // 밑줄의 색상
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  height: 20,
+                  width: double.infinity,
+                  color: Colors.transparent, // 배경색 설정
+                  child: Text(
+                    "간편 메일 작성",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+                Divider(
+                  thickness: 0.3, // 밑줄의 두께 조절
+                  color: Colors.grey, // 밑줄의 색상
+                ), // 고정 높이를 가진 SizedBox를 사용
+                Expanded(child: _contents(800)), // 나머지 공간을 차지하는 위젯
+              ],
+            ),
+          ),
           SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.only(right:10),
               child: Container(
-                width: 80,
+                width: 110,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text("부메뉴", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                    Text("메일 옵션", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
                     SizedBox(height: 8,),
-                    SideMenu(sidemenuName: "메뉴1", fontsz:12),
-                    SideMenu(sidemenuName: "메뉴2", fontsz:12),
-                    Dropbox(sidemenuName: "메뉴3", fontsz:12),
-                    Dropbox(sidemenuName: "메뉴4", fontsz:12),
+                    Dropbox(category: "언어", options: ["한국어", "中文", "tiếng Việt", "O'zbekcha", "Indonésia", "हिन्दी", "русский", "қазақша", "বাংলা", "اُردُو", "官话", "日本語", "Монгол хэл", "မြန်မာဘာသာ", "English", " Filipino", "مَصْرِِي", "ภาษาไทย", "кыргызча", "فارسی", "Français", "Italiano", "Español", "Deutsch", "Melayu", "नेपाली", "اللغة العربية", "ភាសាខ្មែរ", "Azərbaycan dili", "广东话", "български", "українська мова", "Latviešu ", "ქართული ", "Teny Malagasy", "Swahili", "Eesti keel", "Türkmençe", "Türkçe", "Română", "тоҷикӣ", "português", "čeština", "suomalainen", "język polski", "Gaeilge", "norsk", "lietuvių kalba", "Nederlands", "עִבְרִית", "Kirundi"], fontsz:14,onSelected: (value) {
+                      setState(() {
+                        a7 = value ?? '';
+                      });
+                    },),
+                    Dropbox(category: "스타일", options: ['공손하게','친근하게','간결하게','상세하게'], fontsz:14, onSelected: (value) {
+                      setState(() {
+                        a8 = value ?? '';
+                      });
+                    },),
+                    Dropbox(category: "이모지", options: ['많이','조금','없음'], fontsz:14, onSelected: (value) {
+                      setState(() {
+                        a9= value ?? '';
+                      });
+                    },),
 
                   ],
                 ),
@@ -281,7 +365,35 @@ class _AutomailPageState extends State<AutomailPage> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(child: _contents(400)),
+          Expanded( // Expanded를 사용하여 왼쪽 Column이 남은 공간을 모두 차지하도록 함
+            child: Column(
+              children: [
+                Divider(
+                  thickness: 0.3, // 밑줄의 두께 조절
+                  color: Colors.grey, // 밑줄의 색상
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  height: 20,
+                  width: double.infinity,
+                  color: Colors.transparent, // 배경색 설정
+                  child: Text(
+                    "간편 메일 작성",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+                Divider(
+                  thickness: 0.3, // 밑줄의 두께 조절
+                  color: Colors.grey, // 밑줄의 색상
+                ), // 고정 높이를 가진 SizedBox를 사용
+                Expanded(child: _contents(900)), // 나머지 공간을 차지하는 위젯
+              ],
+            ),
+          ),
           SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.only(right: 10.0),
@@ -290,12 +402,23 @@ class _AutomailPageState extends State<AutomailPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text("부메뉴", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                    Text("메일 옵션", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
                     SizedBox(height: 8,),
-                    SideMenu(sidemenuName: "메뉴1", fontsz:16),
-                    SideMenu(sidemenuName: "메뉴2", fontsz:16),
-                    Dropbox(sidemenuName: "메뉴3", fontsz:16),
-                    Dropbox(sidemenuName: "메뉴4", fontsz:16),
+                    Dropbox(category: "언어", options: ["한국어", "中文", "tiếng Việt", "O'zbekcha", "Indonésia", "हिन्दी", "русский", "қазақша", "বাংলা", "اُردُو", "官话", "日本語", "Монгол хэл", "မြန်မာဘာသာ", "English", " Filipino", "مَصْرِِي", "ภาษาไทย", "кыргызча", "فارسی", "Français", "Italiano", "Español", "Deutsch", "Melayu", "नेपाली", "اللغة العربية", "ភាសាខ្មែរ", "Azərbaycan dili", "广东话", "български", "українська мова", "Latviešu ", "ქართული ", "Teny Malagasy", "Swahili", "Eesti keel", "Türkmençe", "Türkçe", "Română", "тоҷикӣ", "português", "čeština", "suomalainen", "język polski", "Gaeilge", "norsk", "lietuvių kalba", "Nederlands", "עִבְרִית", "Kirundi"], fontsz:14,onSelected: (value) {
+                      setState(() {
+                        a7 = value ?? '';
+                      });
+                    },),
+                    Dropbox(category: "스타일", options: ['공손하게','친근하게','간결하게','상세하게'], fontsz:14, onSelected: (value) {
+                      setState(() {
+                        a8 = value ?? '';
+                      });
+                    },),
+                    Dropbox(category: "이모지", options: ['많이','조금','없음'], fontsz:14, onSelected: (value) {
+                      setState(() {
+                        a9= value ?? '';
+                      });
+                    },),
 
                   ],
                 ),
@@ -306,14 +429,6 @@ class _AutomailPageState extends State<AutomailPage> {
         ],),
     );
   }
-
-
-
-
-
-
-
-
 
   Widget smallmenu(String smallmenu, double fontsz, GestureTapCallback onTap){
     return InkWell(
@@ -332,27 +447,6 @@ class _AutomailPageState extends State<AutomailPage> {
         ),
       ),);
   }
-
-  // Widget _sideMenu(String sidemenuName, double fontsz, VoidCallback onPressed){
-  //   return TextButton(
-  //       style: ButtonStyle(
-  //           padding: MaterialStateProperty.resolveWith(getPadding),
-  //           foregroundColor:
-  //           MaterialStateProperty.resolveWith(getForegroundColor),
-  //           overlayColor: MaterialStateProperty.resolveWith(
-  //                   (states) => Colors.transparent)
-  //       ),
-  //
-  //       onPressed: (){},
-  //       child: Text(
-  //         sidemenuName,
-  //         style: TextStyle(fontSize: fontsz),
-  //       )
-  //   );}
-
-
-
-
 
   Color getForegroundColor(Set<MaterialState> states){
     const interactiveStates = <MaterialState>{
