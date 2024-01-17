@@ -11,10 +11,15 @@ class VerificationPage extends StatelessWidget {
 
   Widget _buildButton(String text, VoidCallback onPressed) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10),
+      padding: EdgeInsets.symmetric(horizontal: 40),
       child: ElevatedButton(
         onPressed: onPressed,
-        child: Text(text),
+        style: ElevatedButton.styleFrom(
+          fixedSize: Size(400, 48), // 버튼의 가로 길이와 높이를 조절하세요.
+          primary: Color(0xff6EA6E9),    // 배경색을 파란색으로 설정하세요.
+        ),
+        child: Text(text,style: TextStyle(
+            fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white ),),
       ),
     );
   }
@@ -29,17 +34,23 @@ class VerificationPage extends StatelessWidget {
           children: <Widget>[
             Image.asset(
               "images/data_story_jeol_01.gif",
-              height: 300.0,
-              width: 300.0,
+              height: 400.0,
+              width: 400.0,
             ),
-            Text('이메일: $email'),
+            Text('이메일: $email', style: TextStyle(fontSize: 20),),
             SizedBox(height: 10),
-            TextField(
-              controller: _verificationCodeController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: '인증번호',
-                border: OutlineInputBorder(),
+            Container(
+              width: 400,
+              child: TextField(
+                controller: _verificationCodeController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: '인증번호',
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xff6EA6E9)), // 테두리 색상 설정
+                  ),
+                  border: OutlineInputBorder(),
+                ),
               ),
             ),
             SizedBox(height: 20),

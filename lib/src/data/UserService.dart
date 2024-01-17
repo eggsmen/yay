@@ -41,8 +41,9 @@ class CustomMailSend {
     required String content,
   }) async {
     final response = await http.post(
-      Uri.parse(urlBase.url+'/mail/send-custom/v1').replace(queryParameters:{
-        'userId': userId}),
+      Uri.parse(urlBase.url+'/mail/send-custom/v1?userId=$userId'),
+      // Uri.parse(urlBase.url+'/mail/send-custom/v1').replace(queryParameters:{
+      //   'userId': userId}),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({"toMail": toMail, "subject": subject, "content": content}),
 

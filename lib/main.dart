@@ -10,7 +10,7 @@ import 'package:menttang/src/data/UserService.dart'; // 가정한 import
 import 'package:menttang/src/pages/VerificationPage.dart';
 import 'package:menttang/src/pages/sendmailPage.dart'; // 가정한 import
 
-int userId = 0;
+int userId = 1 ;
 
 void main() {
   runApp(const MyApp());
@@ -56,32 +56,46 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _buildInitialButtons() {
-    return Row(
+    return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         _buildButton("로그인", () => setState(() => isLogin = true)),
+        SizedBox(height: 25),
         _buildButton("회원가입", () => setState(() => isSignUp = true)),
       ],
     );
   }
 
   Widget _buildLoginFields() {
+    final double maxTextFieldWidth = 400.0;
     return Column(
       children: [
-        TextField(
-          controller: _emailController,
-          decoration: InputDecoration(
-            labelText: '이메일',
-            border: OutlineInputBorder(),
+        Container(
+          width: 400,
+          child: TextField(
+            controller: _emailController,
+            decoration: InputDecoration(
+              labelText: '이메일',
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Color(0xff6EA6E9)), // 테두리 색상 설정
+              ),
+              border: OutlineInputBorder(),
+            ),
           ),
         ),
         SizedBox(height: 10),
-        TextField(
-          controller: _passwordController,
-          obscureText: true,
-          decoration: InputDecoration(
-            labelText: '패스워드',
-            border: OutlineInputBorder(),
+        Container(
+          width: 400,
+          child: TextField(
+            controller: _passwordController,
+            obscureText: true,
+            decoration: InputDecoration(
+              labelText: '패스워드',
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Color(0xff6EA6E9)), // 테두리 색상 설정
+              ),
+              border: OutlineInputBorder(),
+            ),
           ),
         ),
         SizedBox(height: 20),
@@ -97,30 +111,53 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _buildSignUpFields() {
+    final double maxTextFieldWidth = 400.0; // 가로 길이 상한선을 정하세요.
+
     return Column(
       children: [
-        TextField(
-          controller: _nicknameController,
-          decoration: InputDecoration(
-            labelText: '닉네임',
-            border: OutlineInputBorder(),
+        Container(
+          width: maxTextFieldWidth,
+          child: TextField(
+            controller: _nicknameController,
+            decoration: InputDecoration(
+              labelText: '닉네임',
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Color(0xff6EA6E9)), // 테두리 색상 설정
+              ),
+              border: OutlineInputBorder(),
+              contentPadding: EdgeInsets.all(10.0), // 패딩을 조절하세요.
+            ),
           ),
         ),
         SizedBox(height: 10),
-        TextField(
-          controller: _emailController,
-          decoration: InputDecoration(
-            labelText: '이메일',
-            border: OutlineInputBorder(),
+        Container(
+          width: maxTextFieldWidth,
+          child: TextField(
+            controller: _emailController,
+            decoration: InputDecoration(
+              labelText: '이메일',
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Color(0xff6EA6E9)), // 테두리 색상 설정
+              ),
+              border: OutlineInputBorder(),
+              contentPadding: EdgeInsets.all(10.0), // 패딩을 조절하세요.
+            ),
           ),
         ),
         SizedBox(height: 10),
-        TextField(
-          controller: _passwordController,
-          obscureText: true,
-          decoration: InputDecoration(
-            labelText: '패스워드',
-            border: OutlineInputBorder(),
+        Container(
+          width: maxTextFieldWidth,
+          child: TextField(
+            controller: _passwordController,
+            obscureText: true,
+            decoration: InputDecoration(
+              labelText: '패스워드',
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Color(0xff6EA6E9)), // 테두리 색상 설정
+              ),
+              border: OutlineInputBorder(),
+              contentPadding: EdgeInsets.all(10.0), // 패딩을 조절하세요.
+            ),
           ),
         ),
         SizedBox(height: 20),
@@ -129,15 +166,22 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+
   Widget _buildButton(String text, VoidCallback onPressed) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10),
+      padding: EdgeInsets.symmetric(horizontal: 40),
       child: ElevatedButton(
         onPressed: onPressed,
-        child: Text(text),
+        style: ElevatedButton.styleFrom(
+          fixedSize: Size(400, 48), // 버튼의 가로 길이와 높이를 조절하세요.
+          primary: Color(0xff6EA6E9),    // 배경색을 파란색으로 설정하세요.
+        ),
+        child: Text(text,style: TextStyle(
+            fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white ),),
       ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -150,7 +194,7 @@ class _LoginPageState extends State<LoginPage> {
               padding: const EdgeInsets.all(10),
               child: Image.asset("assets/images/img.png", width: 500),
             ),
-            SizedBox(height: 20),
+              SizedBox(height: 20),
             if (isSignUp) _buildSignUpFields(),
             if (isLogin) _buildLoginFields(),
             if (!isLogin && !isSignUp) _buildInitialButtons(),
