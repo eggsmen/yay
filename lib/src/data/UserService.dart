@@ -1,4 +1,4 @@
-
+import 'package:menttang/main.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:menttang/src/data/baseUrl.dart';
@@ -33,3 +33,22 @@ class checkAuth {
     return response;
   }
 }
+
+class CustomMailSend {
+  static Future<http.Response> fetchData({
+    required String toMail,
+    required String subject,
+    required String content,
+  }) async {
+    final response = await http.post(
+      Uri.parse(urlBase.url+'/mail/send-custom/v1').replace(queryParameters:{
+        'userId': userId}),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({"toMail": toMail, "subject": subject, "content": content}),
+
+    );
+
+    return response;
+  }
+}
+

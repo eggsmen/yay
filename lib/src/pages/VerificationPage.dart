@@ -27,6 +27,11 @@ class VerificationPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Image.asset(
+              "images/data_story_jeol_01.gif",
+              height: 300.0,
+              width: 300.0,
+            ),
             Text('이메일: $email'),
             SizedBox(height: 10),
             TextField(

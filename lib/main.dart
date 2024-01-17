@@ -1,9 +1,16 @@
+
+
+
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:menttang/src/home.dart';
 import 'package:menttang/src/controller/screen_layout_controller.dart';
 import 'package:menttang/src/data/UserService.dart'; // 가정한 import
-import 'package:menttang/src/pages/VerificationPage.dart'; // 가정한 import
+import 'package:menttang/src/pages/VerificationPage.dart';
+import 'package:menttang/src/pages/sendmailPage.dart'; // 가정한 import
+
+int userId = 0;
 
 void main() {
   runApp(const MyApp());
