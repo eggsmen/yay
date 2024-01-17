@@ -27,6 +27,9 @@ class _AutomailPageState extends State<AutomailPage> {
   String answer4 = '';
   String answer5 = '';
   String answer6 = '';
+  String a7 = '';
+  String a8 = '';
+  String a9 = '';
   bool areAllQuestionsAnswered() {
     return answer1.isNotEmpty && answer2.isNotEmpty && answer3.isNotEmpty && answer4.isNotEmpty;
   }
@@ -45,7 +48,7 @@ class _AutomailPageState extends State<AutomailPage> {
 
   void onQuestionsCompleted(String a1, String a2, String a3, String a4, String a5, String a6) {
     onQuestionsAnswered();
-    initiateStreaming(a1,a2,a3,a4,a5,a6);
+    initiateStreaming(a1,a2,a3,a4,a5,a6,a7,a8,a9);
   }
 
 
@@ -54,9 +57,9 @@ class _AutomailPageState extends State<AutomailPage> {
     super.initState();
   }
 
-  void initiateStreaming(String a1, String a2, String a3, String a4, String a5, String a6) {
+  void initiateStreaming(String a1, String a2, String a3, String a4, String a5, String a6, String a7, String a8, String a9) {
     dataSubscription?.cancel();
-    dataSubscription = DataFetcher.fetchDataStream(a1,a2,a3,a4,a5,a6).listen((data) {
+    dataSubscription = DataFetcher.fetchDataStream(a1,a2,a3,a4,a5,a6,a7,a8,a9).listen((data) {
       setState(() {
         liveData += data;
       });
@@ -259,9 +262,21 @@ class _AutomailPageState extends State<AutomailPage> {
                 children: [
                   Text("메일 옵션", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
                   SizedBox(height: 8,),
-                  Dropbox(category: "언어", options: ["한국어", "中文", "tiếng Việt", "O'zbekcha", "Indonésia", "हिन्दी", "русский", "қазақша", "বাংলা", "اُردُو", "官话", "日本語", "Монгол хэл", "မြန်မာဘာသာ", "English", " Filipino", "مَصْرِِي", "ภาษาไทย", "кыргызча", "فارسی", "Français", "Italiano", "Español", "Deutsch", "Melayu", "नेपाली", "اللغة العربية", "ភាសាខ្មែរ", "Azərbaycan dili", "广东话", "български", "українська мова", "Latviešu ", "ქართული ", "Teny Malagasy", "Swahili", "Eesti keel", "Türkmençe", "Türkçe", "Română", "тоҷикӣ", "português", "čeština", "suomalainen", "język polski", "Gaeilge", "norsk", "lietuvių kalba", "Nederlands", "עִבְרִית", "Kirundi"], fontsz:10),
-                  Dropbox(category: "스타일", options: ['공손하게','친근하게','간결하게','상세하게'], fontsz:10),
-                  Dropbox(category: "이모지", options: ['많이','조금','없음'], fontsz:10),
+                  Dropbox(category: "언어", options: ["한국어", "中文", "tiếng Việt", "O'zbekcha", "Indonésia", "हिन्दी", "русский", "қазақша", "বাংলা", "اُردُو", "官话", "日本語", "Монгол хэл", "မြန်မာဘာသာ", "English", " Filipino", "مَصْرِِي", "ภาษาไทย", "кыргызча", "فارسی", "Français", "Italiano", "Español", "Deutsch", "Melayu", "नेपाली", "اللغة العربية", "ភាសាខ្មែរ", "Azərbaycan dili", "广东话", "български", "українська мова", "Latviešu ", "ქართული ", "Teny Malagasy", "Swahili", "Eesti keel", "Türkmençe", "Türkçe", "Română", "тоҷикӣ", "português", "čeština", "suomalainen", "język polski", "Gaeilge", "norsk", "lietuvių kalba", "Nederlands", "עִבְרִית", "Kirundi"], fontsz:10,onSelected: (value) {
+                    setState(() {
+                      a7 = value ?? '';
+                    });
+                  },),
+                  Dropbox(category: "스타일", options: ['공손하게','친근하게','간결하게','상세하게'], fontsz:10, onSelected: (value) {
+                    setState(() {
+                      a8 = value ?? '';
+                    });
+                  },),
+                  Dropbox(category: "이모지", options: ['많이','조금','없음'], fontsz:10, onSelected: (value) {
+                    setState(() {
+                      a9= value ?? '';
+                    });
+                  },),
 
 
                 ],
@@ -318,9 +333,21 @@ class _AutomailPageState extends State<AutomailPage> {
                   children: [
                     Text("메일 옵션", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
                     SizedBox(height: 8,),
-                    Dropbox(category: "언어", options: ["한국어", "中文", "tiếng Việt", "O'zbekcha", "Indonésia", "हिन्दी", "русский", "қазақша", "বাংলা", "اُردُو", "官话", "日本語", "Монгол хэл", "မြန်မာဘာသာ", "English", " Filipino", "مَصْرِِي", "ภาษาไทย", "кыргызча", "فارسی", "Français", "Italiano", "Español", "Deutsch", "Melayu", "नेपाली", "اللغة العربية", "ភាសាខ្មែរ", "Azərbaycan dili", "广东话", "български", "українська мова", "Latviešu ", "ქართული ", "Teny Malagasy", "Swahili", "Eesti keel", "Türkmençe", "Türkçe", "Română", "тоҷикӣ", "português", "čeština", "suomalainen", "język polski", "Gaeilge", "norsk", "lietuvių kalba", "Nederlands", "עִבְרִית", "Kirundi"], fontsz:14),
-                    Dropbox(category: "스타일", options: ['공손하게','친근하게','간결하게','상세하게'], fontsz:14),
-                    Dropbox(category: "이모지", options: ['많이','조금','없음'], fontsz:14),
+                    Dropbox(category: "언어", options: ["한국어", "中文", "tiếng Việt", "O'zbekcha", "Indonésia", "हिन्दी", "русский", "қазақша", "বাংলা", "اُردُو", "官话", "日本語", "Монгол хэл", "မြန်မာဘာသာ", "English", " Filipino", "مَصْرِِي", "ภาษาไทย", "кыргызча", "فارسی", "Français", "Italiano", "Español", "Deutsch", "Melayu", "नेपाली", "اللغة العربية", "ភាសាខ្មែរ", "Azərbaycan dili", "广东话", "български", "українська мова", "Latviešu ", "ქართული ", "Teny Malagasy", "Swahili", "Eesti keel", "Türkmençe", "Türkçe", "Română", "тоҷикӣ", "português", "čeština", "suomalainen", "język polski", "Gaeilge", "norsk", "lietuvių kalba", "Nederlands", "עִבְרִית", "Kirundi"], fontsz:14,onSelected: (value) {
+                      setState(() {
+                        a7 = value ?? '';
+                      });
+                    },),
+                    Dropbox(category: "스타일", options: ['공손하게','친근하게','간결하게','상세하게'], fontsz:14, onSelected: (value) {
+                      setState(() {
+                        a8 = value ?? '';
+                      });
+                    },),
+                    Dropbox(category: "이모지", options: ['많이','조금','없음'], fontsz:14, onSelected: (value) {
+                      setState(() {
+                        a9= value ?? '';
+                      });
+                    },),
 
                   ],
                 ),
@@ -377,9 +404,21 @@ class _AutomailPageState extends State<AutomailPage> {
                   children: [
                     Text("메일 옵션", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
                     SizedBox(height: 8,),
-                    Dropbox(category: "언어", options: ["한국어", "中文", "tiếng Việt", "O'zbekcha", "Indonésia", "हिन्दी", "русский", "қазақша", "বাংলা", "اُردُو", "官话", "日本語", "Монгол хэл", "မြန်မာဘာသာ", "English", " Filipino", "مَصْرِِي", "ภาษาไทย", "кыргызча", "فارسی", "Français", "Italiano", "Español", "Deutsch", "Melayu", "नेपाली", "اللغة العربية", "ភាសាខ្មែរ", "Azərbaycan dili", "广东话", "български", "українська мова", "Latviešu ", "ქართული ", "Teny Malagasy", "Swahili", "Eesti keel", "Türkmençe", "Türkçe", "Română", "тоҷикӣ", "português", "čeština", "suomalainen", "język polski", "Gaeilge", "norsk", "lietuvių kalba", "Nederlands", "עִבְרִית", "Kirundi"], fontsz:16),
-                    Dropbox(category: "스타일", options: ['공손하게','친근하게','간결하게','상세하게'], fontsz:16),
-                    Dropbox(category: "이모지", options: ['많이','조금','없음'], fontsz:16),
+                    Dropbox(category: "언어", options: ["한국어", "中文", "tiếng Việt", "O'zbekcha", "Indonésia", "हिन्दी", "русский", "қазақша", "বাংলা", "اُردُو", "官话", "日本語", "Монгол хэл", "မြန်မာဘာသာ", "English", " Filipino", "مَصْرِِي", "ภาษาไทย", "кыргызча", "فارسی", "Français", "Italiano", "Español", "Deutsch", "Melayu", "नेपाली", "اللغة العربية", "ភាសាខ្មែរ", "Azərbaycan dili", "广东话", "български", "українська мова", "Latviešu ", "ქართული ", "Teny Malagasy", "Swahili", "Eesti keel", "Türkmençe", "Türkçe", "Română", "тоҷикӣ", "português", "čeština", "suomalainen", "język polski", "Gaeilge", "norsk", "lietuvių kalba", "Nederlands", "עִבְרִית", "Kirundi"], fontsz:14,onSelected: (value) {
+                      setState(() {
+                        a7 = value ?? '';
+                      });
+                    },),
+                    Dropbox(category: "스타일", options: ['공손하게','친근하게','간결하게','상세하게'], fontsz:14, onSelected: (value) {
+                      setState(() {
+                        a8 = value ?? '';
+                      });
+                    },),
+                    Dropbox(category: "이모지", options: ['많이','조금','없음'], fontsz:14, onSelected: (value) {
+                      setState(() {
+                        a9= value ?? '';
+                      });
+                    },),
 
                   ],
                 ),
