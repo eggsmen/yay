@@ -1,16 +1,43 @@
-# menttang
 
-A new Flutter project.
+<img width="888" alt="스크린샷 2024-01-17 오후 8 04 13" src="https://github.com/eggsmen/yay/assets/81519167/fccc00c8-6f95-4fd3-ae1b-711adb4ea80f">
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
+# yay!📧
+예의 있는 메일 작성 및 전송이 가능한 메일 작성 도우미 어플리케이션
 
-A few resources to get you started if this is your first Flutter project:
+<br/>
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## A. 프로젝트 설명
+**'yay!'** 는 보다 예의 있는 메일 작성을 쉽게 느껴지도록 해주는 메일 작성 도우미입니다. 
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+### 1. 나만의 커스텀 카테고리 설정
+
+**'yay!'** 에서는 메일 작성을 위한 나만의 커스텀 카테고리들을 설정할 수 있습니다. 
+
+- 기본 메일 양식: 수신자/발신자/용건/자세한내용
+- 언어: 메일을 작성할 언어 지정
+- 이모지: 메일에 포함시킬 이모지 양 지정
+- 어투: 메일 작성할 어투 옵션 지정
+
+간단한 옵션 체크와 메일 양식 입력으로, 예의 있는 메일 작성이 쉽도록 도움을 줄 수 있습니다. 
+
+<br/>
+
+### 2. 간단한 메일 최종본 완성 및 전송 
+
+**'yay!'** 에서는 **'yay!'** 가 gpt를 통해 제공한 메일 초안을 바탕으로 간단하게 최종본을 완성할 수 있도록 해주며, 수신자 이메일 입력 만으로 곧바로 이메일을 전송할 수 있도록 하여 편리한 메일 전송 기능을 제공합니다. 
+
+<br/>
+
+## B. 화면
+
+<br/>
+
+## C. 동작 영상
+
+<br/>
+
+## D. Backend 개발 링크
+
+
