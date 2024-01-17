@@ -43,9 +43,9 @@ class _AutomailPageState extends State<AutomailPage> {
     });
   }
 
-  void onQuestionsCompleted() {
+  void onQuestionsCompleted(String a1, String a2, String a3, String a4, String a5, String a6) {
     onQuestionsAnswered();
-    initiateStreaming();
+    initiateStreaming(a1,a2,a3,a4,a5,a6);
   }
 
 
@@ -55,9 +55,9 @@ class _AutomailPageState extends State<AutomailPage> {
     super.initState();
   }
 
-  void initiateStreaming() {
+  void initiateStreaming(String a1, String a2, String a3, String a4, String a5, String a6) {
     dataSubscription?.cancel();
-    dataSubscription = DataFetcher.fetchDataStream().listen((data) {
+    dataSubscription = DataFetcher.fetchDataStream(a1,a2,a3,a4,a5,a6).listen((data) {
       setState(() {
         liveData += data;
       });
@@ -93,8 +93,46 @@ class _AutomailPageState extends State<AutomailPage> {
       ),);
   }
 
+  Widget questionField(
+      String labelText,
+      String hintText,
+      TextEditingController controller,
+      double? width,
+      Function(String) onTextChanged // 상태 업데이트를 위한 콜백 함수 추가
+      ) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(labelText),
+              Text(' *', style: TextStyle(color: Colors.red)),
+            ],
+          ),
+        ),
+        Container(
+          width: width,
+          child: TextField(
+            controller: controller,
+            onChanged: (value) {
+              onTextChanged(value); // 상태 업데이트 콜백 호출
+            },
+            decoration: InputDecoration(
+              hintText: hintText,
+            ),
+            maxLines: null,
+          ),
+        ),
+      ],
+    );
+  }
 
-  Widget _contents() {
+
+
+  Widget _contents(double? questionWidth) {
       if (!isQuestionsAnswered) {
         return Center(
           child: Column(
@@ -105,147 +143,37 @@ class _AutomailPageState extends State<AutomailPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text('보내는 이 정보'),
-                            Text(' *', style: TextStyle(color: Colors.red)),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        width: 200, // 밑줄의 최대 길이 설정
-                        child: TextField(
-                          controller: TextEditingController(text: answer1),
-                          onChanged: (value) {
-                            setState(() {
-                              answer1 = value;
-                            });
-                          },
-                          decoration: InputDecoration(
-                            hintText: '보내는 이 정보 입력', // Placeholder 텍스트
-                          ),
-                          maxLines: null, // 내용에 따라 세로로 확장
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text('받는 이 정보'),
-                            Text(' *', style: TextStyle(color: Colors.red)),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        width: 200, // 밑줄의 최대 길이 설정
-                        child: TextField(
-                          controller: TextEditingController(text: answer2),
-                          onChanged: (value) {
-                            setState(() {
-                              answer2 = value;
-                            });
-                          },
-                          decoration: InputDecoration(
-                            hintText: '보내는 이 정보 입력', // Placeholder 텍스트
-                          ),
-                          maxLines: null, // 내용에 따라 세로로 확장
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text('용건'),
-                            Text(' *', style: TextStyle(color: Colors.red)),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        width: 200, // 밑줄의 최대 길이 설정
-                        child: TextField(
-                          controller: TextEditingController(text: answer3),
-                          onChanged: (value) {
-                            setState(() {
-                              answer3 = value;
-                            });
-                          },
-                          decoration: InputDecoration(
-                            hintText: '보내는 이 정보 입력', // Placeholder 텍스트
-                          ),
-                          maxLines: null, // 내용에 따라 세로로 확장
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text('자세한 내용'),
-                            Text(' *', style: TextStyle(color: Colors.red)),
-                          ],
-                        ),
-                      ),
-                
-                      Container(
-                        width: 200, // 밑줄의 최대 길이 설정
-                        child: TextField(
-                          controller: TextEditingController(text: answer4),
-                          onChanged: (value) {
-                            setState(() {
-                              answer4 = value;
-                            });
-                          },
-                          decoration: InputDecoration(
-                            hintText: '보내는 이 정보 입력', // Placeholder 텍스트
-                          ),
-                          maxLines: null, // 내용에 따라 세로로 확장
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child:Text('연락처'),
-                        ),
-                
-                      Container(
-                        width: 200, // 밑줄의 최대 길이 설정
-                        child: TextField(
-                          controller: TextEditingController(text: answer5),
-                          onChanged: (value) {
-                            setState(() {
-                              answer5 = value;
-                            });
-                          },
-                          decoration: InputDecoration(
-                            hintText: '보내는 이 정보 입력', // Placeholder 텍스트
-                          ),
-                          maxLines: null, // 내용에 따라 세로로 확장
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text('기타 사항'),
-                      ),
-                      Container(
-                        width: 200, // 밑줄의 최대 길이 설정
-                        child: TextField(
-                          controller: TextEditingController(text: answer6),
-                          onChanged: (value) {
-                            setState(() {
-                              answer6 = value;
-                            });
-                          },
-                          decoration: InputDecoration(
-                            hintText: '보내는 이 정보 입력', // Placeholder 텍스트
-                          ),
-                          maxLines: null, // 내용에 따라 세로로 확장
-                        ),
-                      ),
-                
+                      questionField('보내는 이 정보', 'ex) 성균관대학교 도술학과 홍길동', answer1Controller, questionWidth, (value) {
+                        setState(() {
+                          answer1 = value;
+                        });
+                      }),
+                      questionField('받는 이 정보', 'ex) 김태윤 교수님', answer2Controller, questionWidth, (value) {
+                        setState(() {
+                          answer2 = value;
+                        });
+                      }),
+                      questionField('용건', 'ex) DS101 축지법개론 성적문의', answer3Controller, questionWidth, (value) {
+                        setState(() {
+                          answer3 = value;
+                        });
+                      }),
+                      questionField('상세정보', 'ex) 축지법 실습 성적에 대한 피드백이 궁금함', answer4Controller, questionWidth, (value) {
+                        setState(() {
+                          answer4 = value;
+                        });
+                      }),
+
+                      questionField('연락처', 'ex) 010-xxxx-xxxx', answer5Controller, questionWidth, (value) {
+                        setState(() {
+                          answer5 = value;
+                        });
+                      }),
+                      questionField('기타 사항', 'ex) 도술대학원 진학에 관련하여 조언이 필요함', answer6Controller, questionWidth, (value) {
+                        setState(() {
+                          answer6 = value;
+                        });
+                      }),
                       // 답변이 완료되지 않았을 경우 버튼을 표시하지 않음
                     ],
                   ),
@@ -254,7 +182,9 @@ class _AutomailPageState extends State<AutomailPage> {
 
           SizedBox(height: 15,),
           areAllQuestionsAnswered()
-              ? clrbutton("메일 초안 생성하기", onQuestionsCompleted)
+              ? clrbutton("메일 초안 생성하기", () =>onQuestionsCompleted(
+              answer1, answer2, answer3, answer4, answer5, answer6
+          ))
               : Container(),
     ]
         ));
@@ -286,7 +216,7 @@ class _AutomailPageState extends State<AutomailPage> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(child: _contents()),
+          Expanded(child: _contents(200)),
           SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.only(right:5),
@@ -319,7 +249,7 @@ class _AutomailPageState extends State<AutomailPage> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(child: _contents()),
+          Expanded(child: _contents(300)),
           SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.only(right:10),
@@ -351,7 +281,7 @@ class _AutomailPageState extends State<AutomailPage> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(child: _contents()),
+          Expanded(child: _contents(400)),
           SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.only(right: 10.0),
@@ -451,13 +381,10 @@ class _AutomailPageState extends State<AutomailPage> {
     switch(widget.screenSizeType){
       case ScreenSizeType.MOBILE:
         return _mobileLayout();
-        break;
       case ScreenSizeType.TABLET:
         return _tabletLayout();
-        break;
       case ScreenSizeType.DESKTOP:
         return _desktopLayout();
-        break;
       default:
         return Container();
     }
