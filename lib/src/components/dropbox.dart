@@ -2,10 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Dropbox extends StatefulWidget {
-  final String sidemenuName;
+  final String category;
+  final List<String> options;
   final double fontsz;
 
-  Dropbox({Key? key, required this.sidemenuName, required this.fontsz}) : super(key: key);
+  Dropbox({Key? key, required this.category, required this.options, required this.fontsz}) : super(key: key);
 
   @override
   _DropboxState createState() => _DropboxState();
@@ -42,12 +43,12 @@ class _DropboxState extends State<Dropbox> {
               _selectedItem = newValue;
             });
           },
-          hint: Center(child: Text('언어',)),
-          items: <String>['한국어', '영어', '스페인어']
+          hint: Center(child: Text(widget.category, style: TextStyle(fontSize: widget.fontsz))),
+          items: widget.options
               .map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
-              child: Center(child: Text(value)),
+              child: Center(child: Text(value, style: TextStyle(fontSize: widget.fontsz))),
             );
           }).toList(),
           dropdownColor: Colors.white,
