@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:menttang/src/components/dropbox.dart';
 import 'package:menttang/src/data/retrofit_network.dart';
 import '../controller/screen_layout_controller.dart';
 import 'dart:async';
+import 'package:menttang/src/components/sidemenu.dart';
 
 class AutomailPage extends StatefulWidget {
   final ScreenSizeType screenSizeType;
@@ -17,15 +19,45 @@ class _AutomailPageState extends State<AutomailPage> {
   StreamSubscription<String>? dataSubscription;
   String liveData = '';
   bool isStreamCompleted = false;
+  bool isContentLoaded = false; // _contents 위젯의 로딩 상태를 관리
+  bool isQuestionsAnswered = false;
+  String answer1 = '';
+  String answer2 = '';
+  String answer3 = '';
+  String answer4 = '';
+  String answer5 = '';
+  String answer6 = '';
+  bool areAllQuestionsAnswered() {
+    return answer1.isNotEmpty && answer2.isNotEmpty && answer3.isNotEmpty && answer4.isNotEmpty;
+  }
+  TextEditingController answer1Controller = TextEditingController();
+  TextEditingController answer2Controller = TextEditingController();
+  TextEditingController answer3Controller = TextEditingController();
+  TextEditingController answer4Controller = TextEditingController();
+  TextEditingController answer5Controller = TextEditingController();
+  TextEditingController answer6Controller = TextEditingController();
+
+  void onQuestionsAnswered() {
+    setState(() {
+      isQuestionsAnswered = true;
+    });
+  }
+
+  void onQuestionsCompleted(String a1, String a2, String a3, String a4, String a5, String a6) {
+    onQuestionsAnswered();
+    initiateStreaming(a1,a2,a3,a4,a5,a6);
+  }
+
+
 
   @override
   void initState() {
     super.initState();
   }
 
-  void initiateStreaming() {
+  void initiateStreaming(String a1, String a2, String a3, String a4, String a5, String a6) {
     dataSubscription?.cancel();
-    dataSubscription = DataFetcher.fetchDataStream().listen((data) {
+    dataSubscription = DataFetcher.fetchDataStream(a1,a2,a3,a4,a5,a6).listen((data) {
       setState(() {
         liveData += data;
       });
@@ -61,8 +93,104 @@ class _AutomailPageState extends State<AutomailPage> {
       ),);
   }
 
-  Widget _contents() {
-    return Scrollbar(
+  Widget questionField(
+      String labelText,
+      String hintText,
+      TextEditingController controller,
+      double? width,
+      Function(String) onTextChanged // 상태 업데이트를 위한 콜백 함수 추가
+      ) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(labelText),
+              Text(' *', style: TextStyle(color: Colors.red)),
+            ],
+          ),
+        ),
+        Container(
+          width: width,
+          child: TextField(
+            controller: controller,
+            onChanged: (value) {
+              onTextChanged(value); // 상태 업데이트 콜백 호출
+            },
+            decoration: InputDecoration(
+              hintText: hintText,
+            ),
+            maxLines: null,
+          ),
+        ),
+      ],
+    );
+  }
+
+
+
+  Widget _contents(double? questionWidth) {
+      if (!isQuestionsAnswered) {
+        return Center(
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      questionField('보내는 이 정보', 'ex) 성균관대학교 도술학과 홍길동', answer1Controller, questionWidth, (value) {
+                        setState(() {
+                          answer1 = value;
+                        });
+                      }),
+                      questionField('받는 이 정보', 'ex) 김태윤 교수님', answer2Controller, questionWidth, (value) {
+                        setState(() {
+                          answer2 = value;
+                        });
+                      }),
+                      questionField('용건', 'ex) DS101 축지법개론 성적문의', answer3Controller, questionWidth, (value) {
+                        setState(() {
+                          answer3 = value;
+                        });
+                      }),
+                      questionField('상세정보', 'ex) 축지법 실습 성적에 대한 피드백이 궁금함', answer4Controller, questionWidth, (value) {
+                        setState(() {
+                          answer4 = value;
+                        });
+                      }),
+
+                      questionField('연락처', 'ex) 010-xxxx-xxxx', answer5Controller, questionWidth, (value) {
+                        setState(() {
+                          answer5 = value;
+                        });
+                      }),
+                      questionField('기타 사항', 'ex) 도술대학원 진학에 관련하여 조언이 필요함', answer6Controller, questionWidth, (value) {
+                        setState(() {
+                          answer6 = value;
+                        });
+                      }),
+                      // 답변이 완료되지 않았을 경우 버튼을 표시하지 않음
+                    ],
+                  ),
+                ),
+              ),
+
+          SizedBox(height: 15,),
+          areAllQuestionsAnswered()
+              ? clrbutton("메일 초안 생성하기", () =>onQuestionsCompleted(
+              answer1, answer2, answer3, answer4, answer5, answer6
+          ))
+              : Container(),
+    ]
+        ));
+      }
+
+      return Scrollbar(
       thumbVisibility: true,
       controller: scrollController,
       child: SingleChildScrollView(
@@ -72,8 +200,6 @@ class _AutomailPageState extends State<AutomailPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 15,),
-              clrbutton("통신버튼", initiateStreaming),
               SizedBox(height: 15,),
               Text(liveData,
                   style: TextStyle(fontSize: 16))
@@ -90,7 +216,7 @@ class _AutomailPageState extends State<AutomailPage> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(child: _contents()),
+          Expanded(child: _contents(200)),
           SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.only(right:5),
@@ -101,11 +227,11 @@ class _AutomailPageState extends State<AutomailPage> {
                   children: [
                     Text("부메뉴", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
                     SizedBox(height: 8,),
-                    _sideMenu("메뉴1", 12, () { }),
-                    _sideMenu("메뉴2", 12, () { }),
-                    _sideMenu("메뉴3", 12, () { }),
-                    _sideMenu("메뉴4", 12, () { }),
-                    _sideMenu("메뉴5", 12, () { }),
+                    SideMenu(sidemenuName: "메뉴1", fontsz:12),
+                    SideMenu(sidemenuName: "메뉴2", fontsz:12),
+                    Dropbox(sidemenuName: "메뉴3", fontsz:12),
+                    Dropbox(sidemenuName: "메뉴4", fontsz:12),
+
 
                   ],
                 ),
@@ -123,7 +249,7 @@ class _AutomailPageState extends State<AutomailPage> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(child: _contents()),
+          Expanded(child: _contents(300)),
           SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.only(right:10),
@@ -134,11 +260,10 @@ class _AutomailPageState extends State<AutomailPage> {
                   children: [
                     Text("부메뉴", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
                     SizedBox(height: 8,),
-                    _sideMenu("메뉴1", 16, () { }),
-                    _sideMenu("메뉴2", 16, () { }),
-                    _sideMenu("메뉴3", 16, () { }),
-                    _sideMenu("메뉴4", 16, () { }),
-                    _sideMenu("메뉴5", 16, () { }),
+                    SideMenu(sidemenuName: "메뉴1", fontsz:12),
+                    SideMenu(sidemenuName: "메뉴2", fontsz:12),
+                    Dropbox(sidemenuName: "메뉴3", fontsz:12),
+                    Dropbox(sidemenuName: "메뉴4", fontsz:12),
 
                   ],
                 ),
@@ -156,7 +281,7 @@ class _AutomailPageState extends State<AutomailPage> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(child: _contents()),
+          Expanded(child: _contents(400)),
           SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.only(right: 10.0),
@@ -167,11 +292,10 @@ class _AutomailPageState extends State<AutomailPage> {
                   children: [
                     Text("부메뉴", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
                     SizedBox(height: 8,),
-                    _sideMenu("메뉴1", 16, () { }),
-                    _sideMenu("메뉴2", 16, () { }),
-                    _sideMenu("메뉴3", 16, () { }),
-                    _sideMenu("메뉴4", 16, () { }),
-                    _sideMenu("메뉴5", 16, () { }),
+                    SideMenu(sidemenuName: "메뉴1", fontsz:16),
+                    SideMenu(sidemenuName: "메뉴2", fontsz:16),
+                    Dropbox(sidemenuName: "메뉴3", fontsz:16),
+                    Dropbox(sidemenuName: "메뉴4", fontsz:16),
 
                   ],
                 ),
@@ -209,22 +333,22 @@ class _AutomailPageState extends State<AutomailPage> {
       ),);
   }
 
-  Widget _sideMenu(String sidemenuName, double fontsz, VoidCallback onPressed){
-    return TextButton(
-        style: ButtonStyle(
-            padding: MaterialStateProperty.resolveWith(getPadding),
-            foregroundColor:
-            MaterialStateProperty.resolveWith(getForegroundColor),
-            overlayColor: MaterialStateProperty.resolveWith(
-                    (states) => Colors.transparent)
-        ),
-
-        onPressed: (){},
-        child: Text(
-          sidemenuName,
-          style: TextStyle(fontSize: fontsz),
-        )
-    );}
+  // Widget _sideMenu(String sidemenuName, double fontsz, VoidCallback onPressed){
+  //   return TextButton(
+  //       style: ButtonStyle(
+  //           padding: MaterialStateProperty.resolveWith(getPadding),
+  //           foregroundColor:
+  //           MaterialStateProperty.resolveWith(getForegroundColor),
+  //           overlayColor: MaterialStateProperty.resolveWith(
+  //                   (states) => Colors.transparent)
+  //       ),
+  //
+  //       onPressed: (){},
+  //       child: Text(
+  //         sidemenuName,
+  //         style: TextStyle(fontSize: fontsz),
+  //       )
+  //   );}
 
 
 
@@ -257,13 +381,10 @@ class _AutomailPageState extends State<AutomailPage> {
     switch(widget.screenSizeType){
       case ScreenSizeType.MOBILE:
         return _mobileLayout();
-        break;
       case ScreenSizeType.TABLET:
         return _tabletLayout();
-        break;
       case ScreenSizeType.DESKTOP:
         return _desktopLayout();
-        break;
       default:
         return Container();
     }
