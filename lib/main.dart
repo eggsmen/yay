@@ -99,15 +99,37 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
         SizedBox(height: 20),
-        _buildButton("로그인", () {
-          // 로그인 로직 실행 및 성공적으로 완료되었을 때
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => HomePage()),
-          );
-        }),
+        _buildButton("로그인", _login),
       ],
     );
+  }
+
+  Future<void> _login() async {
+    try {
+      // UserService의 로그인 메서드를 호출하여 로그인 시도
+      final response = await Login.login(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+
+      if (response.statusCode == 200) {
+        // 로그인 성공 시 HomePage로 이동
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      } else {
+        // 로그인 실패 시 오류 메시지 표시
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('로그인 실패: ${response.statusCode}')),
+        );
+      }
+    } catch (e) {
+      // 네트워크 오류 등 예외 처리
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('오류 발생: $e')),
+      );
+    }
   }
 
   Widget _buildSignUpFields() {

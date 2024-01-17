@@ -83,9 +83,9 @@ Widget _mobileLayout(){
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  menu2("메뉴1", 20, () { }),
-                  menu2("메뉴2", 20, () { }),
-                  menu2("메뉴3", 20, () { }),
+                  menu2("간편 메일", 18, () { }),
+                 // menu2("메일 발송", 20, () { }),
+                  menu2("초안 수정", 18, () { }),
                 ]
             ),
           ),
@@ -108,9 +108,9 @@ Widget _mobileLayout(){
               padding: const EdgeInsets.only(right:10),
               child: Row(
                   children: [
-                    menu2("메뉴1", 20, () { }),
-                    menu2("메뉴2", 20, () { }),
-                    menu2("메뉴3", 20, () { }),
+                    menu2("간편 메일", 18, () { }),
+                    //menu2("메일 발송", 16, () { }),
+                    menu2("초안 수정", 18, () { }),
                   ]
               ),
             ),
