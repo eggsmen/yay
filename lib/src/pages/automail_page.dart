@@ -31,6 +31,7 @@ class _AutomailPageState extends State<AutomailPage> {
   String a7 = '';
   String a8 = '';
   String a9 = '';
+  bool isEditing = false;
 
   bool areAllQuestionsAnswered() {
     return answer1.isNotEmpty && answer2.isNotEmpty && answer3.isNotEmpty &&
@@ -46,6 +47,24 @@ class _AutomailPageState extends State<AutomailPage> {
   final TextEditingController _toMailController = TextEditingController();
   final TextEditingController _subjectController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
+
+  void toggleEditMode() {
+    setState(() {
+      isEditing = !isEditing;
+      if (isEditing) {
+        _contentController.text = liveData; // 편집 모드 시작 시, liveData를 TextField에 설정
+      }
+    });
+  }
+
+  void saveEdits() {
+    setState(() {
+      liveData = _contentController.text; // TextField의 내용을 liveData에 저장
+      isEditing = false;
+    });
+  }
+
+
 
   @override
   void dispose2() {
@@ -64,6 +83,29 @@ class _AutomailPageState extends State<AutomailPage> {
       ),
     );
   }
+
+  Widget _buildEditableContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextField(
+          controller: _contentController..text = liveData,
+          maxLines: null, // 여러 줄 텍스트 허용
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: '내용을 입력하세요',
+          ),
+        ),
+        Row(
+          children: [
+            _buildButton("저장", saveEdits),
+            _buildButton("취소", toggleEditMode),
+          ],
+        ),
+      ],
+    );
+  }
+
 
   void onQuestionsAnswered() {
     setState(() {
@@ -96,15 +138,7 @@ class _AutomailPageState extends State<AutomailPage> {
       String a6, String a7, String a8, String a9) {
     dataSubscription?.cancel();
     dataSubscription = DataFetcher.fetchDataStream(
-        a1,
-        a2,
-        a3,
-        a4,
-        a5,
-        a6,
-        a7,
-        a8,
-        a9).listen((data) {
+        a1, a2, a3, a4, a5, a6, a7, a8, a9).listen((data) {
       setState(() {
         liveData += data;
       });
@@ -112,7 +146,6 @@ class _AutomailPageState extends State<AutomailPage> {
       print('Error: $error');
     });
   }
-
   @override
   void dispose() {
     dataSubscription?.cancel();
@@ -259,21 +292,35 @@ class _AutomailPageState extends State<AutomailPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 15,),
-              Text(liveData,
-                  style: TextStyle(fontSize: 16)),
-              _buildButton("메일 전송", () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => SendMailPage(liveData: liveData)),
-                );
-              })
+              SizedBox(height: 15),
+              isEditing
+                  ? TextField(
+                controller: _contentController,
+                maxLines: null,
+                decoration: InputDecoration(border: OutlineInputBorder()),
+              )
+                  : Text(liveData, style: TextStyle(fontSize: 16)),
+              Row(
+                children: [
+                  if (!isEditing)
+                    _buildButton("메일 전송", () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => SendMailPage(liveData: liveData)),
+                      );
+                    }),
+                  _buildButton(isEditing ? "저장" : "수정", isEditing ? saveEdits : toggleEditMode),
+                  if (isEditing)
+                    _buildButton("취소", toggleEditMode),
+                ],
+              ),
             ],
           ),
         ),
       ),
     );
   }
+
 
   Widget _mobileLayout() {
     return Container(

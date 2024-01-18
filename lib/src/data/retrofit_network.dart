@@ -14,7 +14,7 @@ class DataFetcher {
 
       final sseClient = SseClient(url);
       sseClient.stream.listen((data) {
-        if (data == 'end') {
+        if (data == '^') {
           sseClient.close();
         } else {
           controller.add(data);
